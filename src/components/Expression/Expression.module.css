@@ -1,0 +1,11 @@
+.expression {
+    width: 500px;
+}
+
+.rangeFrom {
+    grid-area: rangeFrom;
+}
+
+.rangeTo {
+    grid-area: rangeTo;
+}

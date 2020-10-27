@@ -1,0 +1,20 @@
+@import-normalize;
+
+html {
+  --color-accent: #4154b3;
+  --color-main: #c4c4c4;
+
+  --font-normal: 'PT Root UI', sans-serif;
+
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-normal);
+  color: var(--color-main);
+}
+
+p {
+  margin: 0;
+}

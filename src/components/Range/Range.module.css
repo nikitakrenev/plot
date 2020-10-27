@@ -1,0 +1,17 @@
+.root {
+    display: grid;
+    grid-template-areas:
+            "header header header"
+            "rangeLabel rangeFrom rangeTo";
+    grid-template-rows: 10px 1fr;
+    grid-template-columns: 1fr 100px 100px;
+    grid-column-gap: 10px;
+}
+
+.rangeLabel {
+    grid-area: rangeLabel;
+    align-self: center;
+    text-align: right;
+}
+
+
