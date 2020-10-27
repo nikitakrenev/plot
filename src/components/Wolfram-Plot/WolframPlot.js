@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import styles from './WolframPlot.module.css'
 
 export const WolframPlot = () => {
-    const [wolfram, setWolfram] = useState(false)
 
     useEffect(() => {
         const script = document.createElement("script");
@@ -12,7 +11,7 @@ export const WolframPlot = () => {
 
     return (
         <div className={styles.root}>
-            <span>WolframAplha</span>
+            <span>WolframAlpha</span>
             <script type="text/javascript" id="WolframAlphaScripta5dd2a74fb266e82a4bf229eb38c5409" src="//www.wolframalpha.com/widget/widget.jsp?id=a5dd2a74fb266e82a4bf229eb38c5409"/>
         </div>
     )

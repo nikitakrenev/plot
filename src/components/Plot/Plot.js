@@ -12,7 +12,6 @@ const buildPlot = (canvas, coordinates) => {
     const labelIndent = 15;
     const hatch = 3;
 
-
     const getPoints = (pointFrom, pointTo) => {
         let x = (Math.abs(pointFrom.x) >= Math.abs(pointTo.x)) ? Math.abs(pointFrom.x) : Math.abs(pointTo.x);
         let y = (Math.abs(pointFrom.y) >= Math.abs(pointTo.y)) ? Math.abs(pointFrom.y) : Math.abs(pointTo.y);
@@ -20,8 +19,25 @@ const buildPlot = (canvas, coordinates) => {
     }
 
     const pointsOnAxis = getPoints(coordinates[0], coordinates[coordinates.length - 1]);
-    const step = (pointsOnAxis > 11) ? (pointsOnAxis > 51) ? 10 : 5 : 1;
+    const step = (pointsOnAxis > 11) ? (pointsOnAxis > 51) ? 10 : 2 : 1;
     const scale = 200 / pointsOnAxis;
+
+    const buildHelpLines = () => {
+        ctx.strokeStyle = "#c4c4c4";
+        ctx.lineWidth = 1.0;
+        ctx.beginPath();
+        ctx.moveTo(plotCenter + coordinates[0].x * scale, plotCenter);
+        ctx.lineTo(plotCenter + coordinates[0].x * scale, plotCenter - coordinates[0].y * scale);
+        ctx.moveTo(plotCenter + coordinates[coordinates.length - 1].x * scale, plotCenter );
+        ctx.lineTo(plotCenter + coordinates[coordinates.length - 1].x * scale, plotCenter - coordinates[coordinates.length - 1].y * scale);
+
+        ctx.moveTo(plotCenter, plotCenter - coordinates[0].y * scale);
+        ctx.lineTo(plotCenter + coordinates[0].x * scale, plotCenter - coordinates[0].y * scale);
+
+        ctx.moveTo(plotCenter, plotCenter - coordinates[coordinates.length - 1].y * scale);
+        ctx.lineTo(plotCenter + coordinates[coordinates.length - 1].x * scale, plotCenter - coordinates[coordinates.length - 1].y * scale);
+        ctx.stroke();
+    }
 
     const buildAxes = () => {
         ctx.clearRect(0,0, canvas.width, canvas.height);
@@ -35,11 +51,15 @@ const buildPlot = (canvas, coordinates) => {
         ctx.stroke();
 
         ctx.beginPath();
-        for(let i = 1; i < pointsOnAxis * 2; i += step) {
-            ctx.moveTo(plotMax - i * scale, plotCenter);
-            ctx.lineTo(plotMax - i * scale, plotCenter - hatch);
-            ctx.moveTo(plotCenter, plotMax - i * scale);
-            ctx.lineTo(plotCenter + hatch, plotMax - i * scale);
+        for(let i = 1; i < pointsOnAxis; i += step) {
+            ctx.moveTo(plotCenter + i * scale, plotCenter);
+            ctx.lineTo(plotCenter + i * scale, plotCenter - hatch);
+            ctx.moveTo(plotCenter - i * scale, plotCenter);
+            ctx.lineTo(plotCenter - i * scale, plotCenter - hatch);
+            ctx.moveTo(plotCenter, plotCenter - i * scale);
+            ctx.lineTo(plotCenter + hatch, plotCenter - i * scale);
+            ctx.moveTo(plotCenter, plotCenter + i * scale);
+            ctx.lineTo(plotCenter + hatch, plotCenter + i * scale);
         }
         ctx.stroke();
 
@@ -59,6 +79,7 @@ const buildPlot = (canvas, coordinates) => {
             }
         }
         ctx.stroke();
+        buildHelpLines();
     }
 
     buildAxes();
