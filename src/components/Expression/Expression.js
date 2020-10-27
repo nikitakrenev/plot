@@ -13,14 +13,15 @@ export const Expression = (props) => {
 
     const checkExpression = (str) => {
         const operations = ['+', '-', '*', '/', '(', ')', '.', ' '];
-        let count = 0;
+        const set = new Set();
 
         for (let i = 0; i < str.length; i += 1) {
             if (!operations.includes(str[i]) && isNaN(str[i]) ) {
-                count += 1
+                set.add(str[i]);
             }
         }
-        return (count <= 1);
+
+        return (set.size <= 1);
     }
 
     const validationSchema = Yup.object().shape({

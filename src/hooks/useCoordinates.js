@@ -15,7 +15,7 @@ export const useCoordinates = (parameters) => {
     const Coordinates = useMemo(() => {
         let coords = [];
         for (let i = +parameters.rangeX.from; i <= +parameters.rangeX.to; i += 1) {
-            let expression = parameters.expression.replace(variable, `${i}`);
+            let expression = parameters.expression.replaceAll(variable, `${i}`);
             let y = Function('"use strict"; return '+expression)();
             coords.push({
                 x: i,
