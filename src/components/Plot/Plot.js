@@ -12,30 +12,29 @@ const buildPlot = (canvas, coordinates) => {
     const labelIndent = 15;
     const hatch = 3;
 
-    const getPoints = (pointFrom, pointTo) => {
-        let x = (Math.abs(pointFrom.x) >= Math.abs(pointTo.x)) ? Math.abs(pointFrom.x) : Math.abs(pointTo.x);
-        let y = (Math.abs(pointFrom.y) >= Math.abs(pointTo.y)) ? Math.abs(pointFrom.y) : Math.abs(pointTo.y);
-        return (x >= y) ? x + 1 : y + 1;
+    const getPoints = (from, to) => {
+        const pointsOnAxis = ((Math.abs(from) >= Math.abs(to)) ?  Math.abs(from) + 1 : Math.abs(to) + 1);
+        const step = (pointsOnAxis > 11) ? (pointsOnAxis > 51) ? 10 : 2 : 1;
+        const scale = (plotSize / 2) / pointsOnAxis;
+
+        return {pointsOnAxis, step, scale}
     }
 
-    const pointsOnAxis = getPoints(coordinates[0], coordinates[coordinates.length - 1]);
-    const step = (pointsOnAxis > 11) ? (pointsOnAxis > 51) ? 10 : 2 : 1;
-    const scale = 200 / pointsOnAxis;
+    const x = getPoints(coordinates[0].x, coordinates[coordinates.length - 1].x);
+    const y = getPoints(coordinates[0].y, coordinates[coordinates.length - 1].y);
 
     const buildHelpLines = () => {
         ctx.strokeStyle = "#c4c4c4";
         ctx.lineWidth = 1.0;
         ctx.beginPath();
-        ctx.moveTo(plotCenter + coordinates[0].x * scale, plotCenter);
-        ctx.lineTo(plotCenter + coordinates[0].x * scale, plotCenter - coordinates[0].y * scale);
-        ctx.moveTo(plotCenter + coordinates[coordinates.length - 1].x * scale, plotCenter );
-        ctx.lineTo(plotCenter + coordinates[coordinates.length - 1].x * scale, plotCenter - coordinates[coordinates.length - 1].y * scale);
-
-        ctx.moveTo(plotCenter, plotCenter - coordinates[0].y * scale);
-        ctx.lineTo(plotCenter + coordinates[0].x * scale, plotCenter - coordinates[0].y * scale);
-
-        ctx.moveTo(plotCenter, plotCenter - coordinates[coordinates.length - 1].y * scale);
-        ctx.lineTo(plotCenter + coordinates[coordinates.length - 1].x * scale, plotCenter - coordinates[coordinates.length - 1].y * scale);
+        ctx.moveTo(plotCenter + coordinates[0].x * x.scale, plotCenter);
+        ctx.lineTo(plotCenter + coordinates[0].x * x.scale, plotCenter - coordinates[0].y * y.scale);
+        ctx.moveTo(plotCenter + coordinates[coordinates.length - 1].x * x.scale, plotCenter );
+        ctx.lineTo(plotCenter + coordinates[coordinates.length - 1].x * x.scale, plotCenter - coordinates[coordinates.length - 1].y * y.scale);
+        ctx.moveTo(plotCenter, plotCenter - coordinates[0].y * y.scale);
+        ctx.lineTo(plotCenter + coordinates[0].x * x.scale, plotCenter - coordinates[0].y * y.scale);
+        ctx.moveTo(plotCenter, plotCenter - coordinates[coordinates.length - 1].y * y.scale);
+        ctx.lineTo(plotCenter + coordinates[coordinates.length - 1].x * x.scale, plotCenter - coordinates[coordinates.length - 1].y * y.scale);
         ctx.stroke();
     }
 
@@ -51,31 +50,34 @@ const buildPlot = (canvas, coordinates) => {
         ctx.stroke();
 
         ctx.beginPath();
-        for(let i = 1; i < pointsOnAxis; i += step) {
-            ctx.moveTo(plotCenter + i * scale, plotCenter);
-            ctx.lineTo(plotCenter + i * scale, plotCenter - hatch);
-            ctx.moveTo(plotCenter - i * scale, plotCenter);
-            ctx.lineTo(plotCenter - i * scale, plotCenter - hatch);
-            ctx.moveTo(plotCenter, plotCenter - i * scale);
-            ctx.lineTo(plotCenter + hatch, plotCenter - i * scale);
-            ctx.moveTo(plotCenter, plotCenter + i * scale);
-            ctx.lineTo(plotCenter + hatch, plotCenter + i * scale);
+        for(let i = 1; i < x.pointsOnAxis; i += x.step) {
+            ctx.moveTo(plotCenter + i * x.scale, plotCenter);
+            ctx.lineTo(plotCenter + i * x.scale, plotCenter - hatch);
+            ctx.moveTo(plotCenter - i * x.scale, plotCenter);
+            ctx.lineTo(plotCenter - i * x.scale, plotCenter - hatch);
+        }
+
+        for(let i = 1; i < y.pointsOnAxis; i += y.step) {
+            ctx.moveTo(plotCenter, plotCenter - i * y.scale);
+            ctx.lineTo(plotCenter + hatch, plotCenter - i * y.scale);
+            ctx.moveTo(plotCenter, plotCenter + i * y.scale);
+            ctx.lineTo(plotCenter + hatch, plotCenter + i * y.scale);
         }
         ctx.stroke();
 
-        ctx.fillText(`${coordinates[0].y}`, plotCenter - labelIndent, plotCenter - scale * coordinates[0].y);
-        ctx.fillText(`${coordinates[coordinates.length - 1].y}`, plotCenter - labelIndent, plotCenter - scale * coordinates[coordinates.length - 1].y);
-        ctx.fillText(`${coordinates[0].x}`, plotCenter + scale * coordinates[0].x, plotCenter + labelIndent);
-        ctx.fillText(`${coordinates[coordinates.length - 1].x}`, plotCenter + scale * coordinates[coordinates.length - 1].x, plotCenter + labelIndent);
+        ctx.fillText(`${coordinates[0].y}`, plotCenter - labelIndent, plotCenter - y.scale * coordinates[0].y);
+        ctx.fillText(`${coordinates[coordinates.length - 1].y}`, plotCenter - labelIndent, plotCenter - y.scale * coordinates[coordinates.length - 1].y);
+        ctx.fillText(`${coordinates[0].x}`, plotCenter + x.scale * coordinates[0].x, plotCenter + labelIndent);
+        ctx.fillText(`${coordinates[coordinates.length - 1].x}`, plotCenter + x.scale * coordinates[coordinates.length - 1].x, plotCenter + labelIndent);
     }
 
     const buildLine = () => {
         ctx.strokeStyle = "#4154b3";
         ctx.beginPath();
         for (let i = 0; i < coordinates.length; i += 1) {
-            ctx.moveTo(plotCenter + coordinates[i].x * scale, plotCenter - coordinates[i].y * scale);
+            ctx.moveTo(plotCenter + coordinates[i].x * x.scale, plotCenter - coordinates[i].y * y.scale);
             if (i + 1 < coordinates.length) {
-                ctx.lineTo(plotCenter + coordinates[i + 1].x * scale, plotCenter - coordinates[i + 1].y * scale);
+                ctx.lineTo(plotCenter + coordinates[i + 1].x * x.scale, plotCenter - coordinates[i + 1].y * y.scale);
             }
         }
         ctx.stroke();

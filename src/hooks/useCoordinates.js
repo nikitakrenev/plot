@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-const operations = ['+', '-', '*', '/', '(', ')', '.', ' '];
+const operations = ['+', '-', '*', '/', '(', ')', '.', ' ', '^'];
 
 const getVariable = (str) => {
     for (let i = 0; i < str.length; i += 1) {
@@ -13,7 +13,7 @@ const getVariable = (str) => {
 export const useCoordinates = (parameters) => {
     const variable = getVariable(parameters.expression);
     const Coordinates = useMemo(() => {
-        let coords = [];
+        const coords = [];
         for (let i = +parameters.rangeX.from; i <= +parameters.rangeX.to; i += 1) {
             let expression = parameters.expression.replaceAll(variable, `${i}`);
             let y = Function('"use strict"; return '+expression)();
